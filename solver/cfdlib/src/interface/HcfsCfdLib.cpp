@@ -1,3 +1,4 @@
+#include "HcfsCfdLib.h"
 namespace HcfdCfd
 {
     void HCFS_Init(int argc, char **argv)

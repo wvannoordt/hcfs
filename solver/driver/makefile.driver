@@ -1,8 +1,15 @@
-EXE := ${CASE_DIR}/${HCFS_EXE}
-CURDIR := $(shell pwd)
-SRC_DIR := ${CURDIR}/src
-MAINCC := ${SRC_DIR}/main.cc
+EXE      := ${CASE_DIR}/${HCFS_EXE}
+CURDIR   := $(shell pwd)
+SRC_DIR  := ${CURDIR}/src
+MAINCC   := ${SRC_DIR}/main.cc
+
+
+
+INCLUDES := -I${HCFS_CFDLIB}/include
+LINKS    := -L${HCFS_CFDLIB}/lib -lhcfscfd
 
 main:
-	${CC_HOST} ${MAINCC} -o ${EXE}
+	${CC_HOST} ${INCLUDES} ${MAINCC} ${LINKS} -o ${EXE}
 
+clean:
+	-rm ${EXE}

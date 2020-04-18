@@ -1,4 +1,16 @@
 include ${HCFS_USER_CASE_CONFIG}
 
+#case options
+ifndef HCFS_EXE=hcfs
+export HCFS_EXE=hcfs
+endif
+
+ifndef DIM
+export DIM=2
+endif
+
 hcfs:
 	${MAKE} -C ${HCFS_SOLVER} -f makefile.solver
+
+clean:
+	${MAKE} -C ${HCFS_SOLVER} -f makefile.solver clean

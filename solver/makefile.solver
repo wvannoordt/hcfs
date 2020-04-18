@@ -8,3 +8,7 @@ driver: cfdlib
 cfdlib:
 	${MAKE} -C ./cfdlib -f makefile.cfdlib
 
+clean:
+	${MAKE} -C ./cfdlib -f makefile.cfdlib clean
+	${MAKE} -C ./driver -f makefile.driver clean
+

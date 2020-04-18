@@ -1,13 +1,16 @@
 CURDIR := $(shell pwd)
 SRC_DIR := ${CURDIR}/src
+CFD_LIB_NAME := hcfscfd
+
 
 OBJ_DIR := ${CURDIR}/obj
 LIB_DIR := ${CURDIR}/lib
 HDR_DIR := ${CURDIR}/include
 
+LIB_TARGET := ${LIB_DIR}/lib${CFD_LIB_NAME}.a
+
 HOST_TARGETS   := ${SRC_DIR}/interface
 #HOST_TARGETS   += ...
-
 HYBRID_TARGETS := ${SRC_DIR}/hybrid
 CUDA_TARGETS   := ${SRC_DIR}/cuda
 
@@ -28,24 +31,33 @@ HOST_HEADERS   := $(foreach dir,${HOST_TARGETS},${HDR_WILD})
 HYBRID_HEADERS := $(foreach dir,${HYBRID_TARGETS},${HDR_WILD})
 CUDA_HEADERS   := $(foreach dir,${CUDA_TARGETS},${HDR_WILD})
 
-HDR_FILES := HOST_HEADERS
-HDR_FILES += HYBRID_HEADERS
-HDR_FILES += CUDA_HEADERS
+HDR_FILES := ${HOST_HEADERS}
+HDR_FILES += ${HYBRID_HEADERS}
+HDR_FILES += ${CUDA_HEADERS}
 
 HOST_OBJECTS   := $(patsubst %.cpp,${OBJ_DIR}/%.o,$(notdir ${HOST_SOURCES}))
 HYBRID_OBJECTS := $(patsubst %.cpp,${OBJ_DIR}/%.o,$(notdir ${HYBRID_SOURCES}))
 CUDA_OBJECTS   := $(patsubst %.cu,${OBJ_DIR}/%.o,$(notdir ${CUDA_SOURCES}))
 
+LIB_BUILD_FLAGS := -fPIC -shared
 
 cfdlib: setup ${HOST_OBJECTS}
-	echo ${HOST_OBJECTS}
-	echo ${HOST_HEADERS}
+	${CC_HOST} ${LIB_BUILD_FLAGS} ${HOST_OBJECTS} -o ${LIB_TARGET}
 	
-${HOST_OBJECTS}: ${OBJ_DIR}/%.o : $(dir ${HOST_SOURCES})/%.cpp
+${HOST_OBJECTS}: ${OBJ_DIR}/%.o : $(dir ${HOST_SOURCES})%.cpp
 	${CC_HOST} -c $< -o $@
 
 setup:
+	-rm -r ${HDR_DIR}
 	mkdir -p ${OBJ_DIR}
 	mkdir -p ${LIB_DIR}
 	mkdir -p ${HDR_DIR}
+	for hdr in ${HDR_FILES} ; do \
+		ln -s $${hdr} -t ${HDR_DIR};\
+	done
+
+clean:
+	-rm -r ${OBJ_DIR}
+	-rm -r ${LIB_DIR}
+	-rm -r ${HDR_DIR}
 
