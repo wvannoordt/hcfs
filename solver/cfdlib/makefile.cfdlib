@@ -1,0 +1,51 @@
+CURDIR := $(shell pwd)
+SRC_DIR := ${CURDIR}/src
+
+OBJ_DIR := ${CURDIR}/obj
+LIB_DIR := ${CURDIR}/lib
+HDR_DIR := ${CURDIR}/include
+
+HOST_TARGETS   := ${SRC_DIR}/interface
+#HOST_TARGETS   += ...
+
+HYBRID_TARGETS := ${SRC_DIR}/hybrid
+CUDA_TARGETS   := ${SRC_DIR}/cuda
+
+ALL_TARGETS := ${HOST_TARGETS}
+ALL_TARGETS += ${HYBRID_TARGETS} 
+ALL_TARGETS += ${CUDA_TARGETS}
+
+
+CPP_WILD = $(wildcard $(dir)/*.cpp)
+HDR_WILD = $(wildcard $(dir)/*.h)
+CU_WILD  = $(wildcard $(dir)/*.cu)
+
+HOST_SOURCES   := $(foreach dir,${HOST_TARGETS},${CPP_WILD})
+HYBRID_SOURCES := $(foreach dir,${HYBRID_TARGETS},${CPP_WILD})
+CUDA_SOURCES   := $(foreach dir,${CUDA_TARGETS},${CU_WILD})
+
+HOST_HEADERS   := $(foreach dir,${HOST_TARGETS},${HDR_WILD})
+HYBRID_HEADERS := $(foreach dir,${HYBRID_TARGETS},${HDR_WILD})
+CUDA_HEADERS   := $(foreach dir,${CUDA_TARGETS},${HDR_WILD})
+
+HDR_FILES := HOST_HEADERS
+HDR_FILES += HYBRID_HEADERS
+HDR_FILES += CUDA_HEADERS
+
+HOST_OBJECTS   := $(patsubst %.cpp,${OBJ_DIR}/%.o,$(notdir ${HOST_SOURCES}))
+HYBRID_OBJECTS := $(patsubst %.cpp,${OBJ_DIR}/%.o,$(notdir ${HYBRID_SOURCES}))
+CUDA_OBJECTS   := $(patsubst %.cu,${OBJ_DIR}/%.o,$(notdir ${CUDA_SOURCES}))
+
+
+cfdlib: setup ${HOST_OBJECTS}
+	echo ${HOST_OBJECTS}
+	echo ${HOST_HEADERS}
+	
+${HOST_OBJECTS}: ${OBJ_DIR}/%.o : $(dir ${HOST_SOURCES})/%.cpp
+	${CC_HOST} -c $< -o $@
+
+setup:
+	mkdir -p ${OBJ_DIR}
+	mkdir -p ${LIB_DIR}
+	mkdir -p ${HDR_DIR}
+

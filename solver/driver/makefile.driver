@@ -1,0 +1,8 @@
+EXE := ${CASE_DIR}/${HCFS_EXE}
+CURDIR := $(shell pwd)
+SRC_DIR := ${CURDIR}/src
+MAINCC := ${SRC_DIR}/main.cc
+
+main:
+	${CC_HOST} ${MAINCC} -o ${EXE}
+

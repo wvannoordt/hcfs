@@ -1,0 +1,10 @@
+HCFS_BUILD_CONFIG := ${HCFS_PATH}/config/buildconfig_main.mk
+include ${HCFS_BUILD_CONFIG}
+
+.PHONY: driver cfdlib
+driver: cfdlib
+	${MAKE} -C ./driver -f makefile.driver
+
+cfdlib:
+	${MAKE} -C ./cfdlib -f makefile.cfdlib
+

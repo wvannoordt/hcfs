@@ -1,0 +1,4 @@
+include ${HCFS_USER_CASE_CONFIG}
+
+hcfs:
+	${MAKE} -C ${HCFS_SOLVER} -f makefile.solver
